@@ -1,0 +1,162 @@
+---
+title: "Task#2(Sparks Foundation)"
+subtitle: "Predict the Optimum number of cluster and represent it visually"
+author: "Ali Raza"
+date: "9/4/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+## Clustering By Using R
+
+In this section we will see how the R language can be used to create cluster of the data sets. We will start with **K-Means Clustering** involving **iris** data sets.
+
+## K-Means Clustering:
+
+k-means clustering is a method of vector quantization, originally from signal processing, that aims to partition n observations into k clusters in which each observation belongs to the cluster with the nearest mean, serving as a prototype of the cluster.
+
+## Loading required R packages For solving the Problem
+
+* Load Recquired Packages:
+  + **datasets:** for loading iris datasets.
+  + **ggplot2:**  for plotting.
+  + **factoextra:** easy to extract and visualize the output of exploratory multivariate data analyses. ggplot2 is mandatory to load for loading.
+  + **cluster:**  finding the group in datasets.
+  + **fpc:**      It have various methods for clustering and cluster validation.
+  
+
+## Data Sets:
+The task is to used **Iris** data sets:
+
+### Data Source:
+This data set is already build into RStudio, so it is easy to find.
+
+Iris data set is not huge, probably advanced R programmes or data scientists would find it rather unsuitable, but for, as a lady and begginer in big data analytics, this is a great place to start and show some simple tricks to plot and analyze this data set.
+
+### Loading Data sets
+Load the Iris data sets that is mandatory for completing the task:
+
+```{r echo=TRUE}
+library(datasets) #for using iris data sets load the datasets library.
+
+data("iris")
+```
+
+**Iris** dataset gives the measurements in centimeters of the variables sepal length and width and petal length and width, respectively, for 50 flowers from each of 3 species of iris. The species are Iris setosa, versicolor, and virginica.
+
+#### To inspect dataset:
+
+Check the upper value of datasets:
+```{r echo=TRUE}
+head(iris)
+```
+
+To read the total number of rows and columns of iris datasets:
+```{r echo=TRUE}
+dim(iris)
+```
+
+So, the iris datasets have **150 Rows** and **5 Columns**.
+
+To check the details of iris datasets:
+```{r echo=TRUE}
+summary(iris)
+```
+
+### Set Seeds
+it ensures that you get the same result if you start with that same seed each time you run the same process.
+
+I set seed to our visualization.
+```{r echo=TRUE}
+set.seed(8593)
+```
+
+
+## K-Meand Mode:
+
+Now I am removing the species and then assigning them to to variable iris_data, which is makes this process safer and easier.
+
+Because K-Means is applied on non-categorical data.
+
+```{r echo=TRUE}
+iris_data <- iris[1:4]
+head(iris_data)
+```
+
+### find Optimum Cluster or determine the value of k
+
+Mine first step to scaling the give dataset:
+```{r echo=TRUE}
+iris_data_scale <- scale(iris_data)
+head(iris_data_scale,20)
+```
+
+
+For determine the value create visualization of scaling datasets with sumsquares
+```{r eval=TRUE}
+library(ggplot2)
+library(factoextra)
+```
+
+**fviz_nbclust():** Dertemines and visualize the optimal number of clusters using different methods: within cluster sums of squares, average silhouette and gap statistics.
+**"wss":** for total within sum of square
+```{r echo=TRUE}
+fviz_nbclust(iris_data_scale, kmeans, method = "wss") + 
+  labs(title = "The elbow method")
+
+```
+
+The optimum cluster or value of k is where the elbow occur.
+
+From the above graph we clearly see the elbow occur is on the point of 3.
+
+So, the value of **k** is **3**.
+
+### K-Means Model:
+```{r echo=TRUE}
+kmeans.model <- kmeans(iris_data, 3)
+kmeans.model
+```
+
+After this code I can see size of these clusters, which means exact count of variables for cluster, in this case: 50, 62, 38.
+
+For further information about accuracy of each species in cluster, I used:
+```{r echo=TRUE}
+table(iris$Species,kmeans.model$cluster)
+```
+
+## Visualization
+
+Now visualization the cluster:
+```{r echo=TRUE}
+colnames(iris_data)
+plot(iris_data[c("Sepal.Length","Sepal.Width")], 
+     col = kmeans.model$cluster
+     , pch = 19)
+```
+
+And after assigning centers we cans see that some of the dots are closer to one point than the other.
+
+So, for that we create the cluster value visualization.
+
+```{r eval=TRUE}
+library(cluster)
+library(fpc)
+```
+
+```{r echo=TRUE}
+plotcluster(iris_data,kmeans.model$cluster)
+```
+
+```{r echo=TRUE}
+clusplot(iris_data, kmeans.model$cluster, color = TRUE , shade = TRUE)
+```
+
+# Thank You!
